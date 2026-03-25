@@ -1,11 +1,14 @@
 import re
-from maincode import chromadbpath, rerankerModel, embeddingsModel, llmModel
 import torch
 import chromadb
 import time
 from sentence_transformers import SentenceTransformer
 from transformers import AutoModel, AutoTokenizer, AutoModelForCausalLM
 
+chromadbpath = './chromadb' #путь хранения базы данных всех книг
+rerankerModel = 'Qwen/Qwen3-Reranker-0.6B' #реранкер модель
+embeddingsModel = 'paraphrase-multilingual-MiniLM-L12-v2' #векторная модель
+llmModel = 'Qwen/Qwen3-1.7B'
 
 def log(string):
     print(string)
@@ -15,7 +18,7 @@ MDA = 200 #Минимальная длина абзаца, прога режет
 emb_count = 20 #сколько ответов будет давать сравнение по косинусам векторов
 
 
-#reranker
+#Qwen3-Reranker-0.6B
 max_reranker_length = 8192
 rerank_count = 3 #на основание скольки элементов llm будет давать ответ, то есть сколько реранкер будет давать вариантов
 reranker_tokenizer = AutoTokenizer.from_pretrained(rerankerModel, padding_side='left')
@@ -98,7 +101,7 @@ def if_text_VERYSMALL(text:list):
     return output
 
 def TTE(knigo: str,file_name: str):
-    knigo = re.sub("[^\w .\n]", " ", knigo)
+    knigo = re.sub(r"[^\w .\n]", " ", knigo)
     knigo = re.sub(r' {2,}', ' ', knigo)
     knigo = knigo.split("\n") #НЕ ЗАБУТЬ ДОБАВИТЬ ДРОБИТЕЛЬ ЕСЛИ ЧАНК БОЛЬШЕ 500 СИМВОЛОВ ПРОСТО ПО ПОЛАМ НА ПОХУЙ
     knigo = if_text_VERYSMALL(knigo)

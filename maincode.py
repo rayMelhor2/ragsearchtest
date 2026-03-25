@@ -2,13 +2,7 @@ from projLogics import *
 from flask import Flask, render_template, request, jsonify
 import os
 
-chromadbpath = './chromadb' #путь хранения базы данных всех книг
-rerankerModel = './models/Qwen3-Reranker-0.6B' #реранкер модель
-embeddingsModel = './models/paraphrase-multilingual-MiniLM-L12-v2' #векторная модель
-llmModel = './models/Qwen3-1.7B'
-
 app = Flask(__name__)
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -46,4 +40,4 @@ def search():
     return jsonify({ 'result': result })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
