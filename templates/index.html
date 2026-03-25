@@ -1,0 +1,74 @@
+<style>
+  * { margin: 0; box-sizing: border-box; }
+
+  body {
+    font-family: sans-serif;
+    background: #f7f7f7;
+    height: 100vh;
+    display: flex;
+  }
+
+  .sidebar {
+    width: 260px;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .result-panel {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+</style>
+
+<div class="sidebar">
+
+  <div style="padding: .75rem; border-bottom: 1px solid #eee; display: flex; gap: .5rem;">
+    <input type="text" id="query" placeholder="Запрос...">
+    <button id="search-btn" onclick="sendQuery()">Найти</button>
+    <span id="loading" style="display:none; font-size:12px; color:#aaa;">Загрузка...</span>
+  </div>
+
+  <form style="padding: .75rem; border-bottom: 1px solid #eee;" method="POST" enctype="multipart/form-data">
+    <b>Загрузить файл</b>
+    <input type="file" name="file">
+    <button type="submit">Отправить</button>
+  </form>
+
+  <div style="overflow-y: auto;">
+    {% for file in files %}
+      <p>{{ file }}</p>
+    {% else %}
+      <p style="color:#aaa">Файлов нет</p>
+    {% endfor %}
+  </div>
+
+</div>
+
+<div class="result-panel" id="result">
+  <span style="color:#aaa">Ответ появится здесь...</span>
+</div>
+
+<script>
+async function sendQuery() {
+  const query = document.getElementById('query').value.trim();
+  if (!query) return;
+
+  document.getElementById('search-btn').style.display = 'none';
+  document.getElementById('loading').style.display = 'inline';
+
+  const res = await fetch('/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query })
+  });
+
+  const data = await res.json();
+
+  document.getElementById('result').innerText = data.result;
+  document.getElementById('search-btn').style.display = 'inline';
+  document.getElementById('loading').style.display = 'none';
+}
+</script>
